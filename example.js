@@ -8,7 +8,8 @@ export const options = {
 };
 
 export default function () {
-  zeromq.send(socket, "foo");
+  const resp = zeromq.send(socket, "foo");
+  console.log("Received resp:", resp);
 }
 
 export function tearDown() {
