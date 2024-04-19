@@ -19,7 +19,6 @@ func (z *ZeroMQ) NewSocket(addr string) (*zmq.Socket, error) {
 		slog.Error("Could not dial remote", slog.Any("error", err))
 		return nil, err
 	}
-	slog.Info("Created socket", slog.Any("socket", sock))
 	return &sock, nil
 }
 
