@@ -23,6 +23,19 @@ go install github.com/k6io/xk6/cmd/xk6@latest
 xk6 build --with github.com/luissimas/xk6-zeromq@latest
 ```
 
+## Socket types
+
+ZeroMQ provides several types of sockets. The goal of this extension is to support all types of sockets that send requests to peers. As such, the following socket types are supported:
+
+- REQ
+- DEALER
+- PUSH
+- PAIR
+- PUB
+- XPUB
+
+For more information, check out the [ZeroMQ Socket API](https://zeromq.org/socket-api/).
+
 ## Example
 
 Given a `example.js` file with the following contents:
@@ -30,7 +43,7 @@ Given a `example.js` file with the following contents:
 ``` javascript
 import zeromq from "k6/x/zeromq";
 
-const socket = zeromq.newSocket("tcp://127.0.0.1:6969");
+const socket = zeromq.newSocket("tcp://127.0.0.1:6969", "dealer");
 
 export const options = {
   duration: "5s",

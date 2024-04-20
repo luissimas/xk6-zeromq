@@ -2,7 +2,9 @@ package zeromq
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"go.k6.io/k6/metrics"
@@ -10,10 +12,26 @@ import (
 	zmq "github.com/go-zeromq/zmq4"
 )
 
-// NewSocket creates a new ZeroMQ socket.
-func (z *ZeroMQ) NewSocket(addr string) (*zmq.Socket, error) {
-	// TODO: support multiple socket types
-	sock := zmq.NewDealer(context.Background())
+var socketBuilder = map[string]func(ctx context.Context, opts ...zmq.Option) zmq.Socket{
+	"dealer": zmq.NewDealer,
+	"req":    zmq.NewReq,
+	"push":   zmq.NewPush,
+	"pair":   zmq.NewPair,
+	"pub":    zmq.NewPub,
+	"xpub":   zmq.NewXPub,
+}
+
+// NewSocket creates a new ZeroMQ socket of type `socketType` connected to `addr`.
+func (z *ZeroMQ) NewSocket(addr string, socketType string) (*zmq.Socket, error) {
+	builder, ok := socketBuilder[strings.ToLower(socketType)]
+	if !ok {
+		var validTypes []string
+		for k := range socketBuilder {
+			validTypes = append(validTypes, k)
+		}
+		return nil, fmt.Errorf("%s is not a valid socket type. Valid socket types: %s", socketType, strings.Join(validTypes, ", "))
+	}
+	sock := builder(context.Background())
 	err := sock.Dial(addr)
 	if err != nil {
 		slog.Error("Could not dial remote", slog.Any("error", err))

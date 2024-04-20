@@ -1,6 +1,6 @@
 import zeromq from "k6/x/zeromq";
 
-const socket = zeromq.newSocket("tcp://127.0.0.1:6969");
+const socket = zeromq.newSocket("tcp://127.0.0.1:6969", "dealer");
 
 export const options = {
   duration: "5s",
